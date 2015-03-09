@@ -66,6 +66,11 @@ public class MainActivity extends ActionBarActivity implements OnClickListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(getResources().getString(R.string.GooglePlus));
+        //   toolbar.setLogoDescription(getResources().getString(R.string.GooglePlus));
+        toolbar.setLogo(R.drawable.download);
 
         SignInBtn = (SignInButton) findViewById(R.id.btn_sign_in);
         SignOutBtn = (Button) findViewById(R.id.btn_sign_out);
@@ -79,20 +84,17 @@ public class MainActivity extends ActionBarActivity implements OnClickListener,
         SignInBtn.setOnClickListener(this);
         SignOutBtn.setOnClickListener(this);
         RevokeAccessbtn.setOnClickListener(this);
-        toolbar = (Toolbar) findViewById(R.id.app_bar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(getResources().getString(R.string.GooglePlus));
-        //   toolbar.setLogoDescription(getResources().getString(R.string.GooglePlus));
-        toolbar.setLogo(R.drawable.download);
+
 
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-                .addApi(Plus.API,null)
+                .addApi(Plus.API)
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .build();
+
     }
 
     /**
