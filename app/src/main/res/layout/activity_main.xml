@@ -5,6 +5,9 @@
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".MainActivity" >
+    <include
+        android:id="@+id/app_bar"
+        layout="@layout/app_bar"/>
 
 
     <LinearLayout
