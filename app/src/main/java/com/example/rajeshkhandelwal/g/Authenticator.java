@@ -1,14 +1,5 @@
 package com.example.rajeshkhandelwal.g;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -27,18 +18,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collections;
 
-
-public class Circles extends Fragment {
-    TextView text;
-    private GoogleApiClient mGoogleApiClient;
+/**
+ * Created by rajeshkhandelwal on 3/11/15.
+ */
+public class Authenticator
+{
     public static com.google.api.services.plus.Plus plus;
     public Boolean isAuthenticated;
     private final File DATA_STORE_DIR = new File(System.getProperty("user.home"), ".store/plus_sample");
     private FileDataStoreFactory dataStoreFactory;
     private HttpTransport httpTransport;
 
-
-    public Circles() {
+    public Authenticator()
+    {
         try
         {
             httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -53,6 +45,7 @@ public class Circles extends Fragment {
             isAuthenticated = false;
         }
     }
+
     private Credential authorize() throws Exception
     {
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(Constants.JSON_FACTORY, new InputStreamReader(Authenticator.class.getResourceAsStream("/com/example/plustests/client_secrets.json")));
@@ -69,7 +62,7 @@ public class Circles extends Fragment {
         {
             for(Person person : people)
             {
-                com.example.rajeshkhandelwal.g.View.printString(person.getDisplayName(), "Friend:");
+                View.printString(person.getDisplayName(), "Friend:");
             }
             if(peopleFeed.getNextPageToken() == null) break;
             listPeople.setPageToken(peopleFeed.getNextPageToken());
@@ -77,37 +70,4 @@ public class Circles extends Fragment {
             people = peopleFeed.getItems();
         }
     }
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-
-    }
-
-    public static Circles newInstance(int position) {
-        Circles Cfragment = new Circles();
-        Bundle args = new Bundle();
-        Log.i("pos", "position at" + position);
-        args.putInt("position", position);
-        Cfragment.setArguments(args);
-        return Cfragment;
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        try {
-            printFriendsList();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        View layout=inflater.inflate(R.layout.fragment_circles, container, false);
-        // Inflate the layout for this fragment
-
-        return layout;
-    }
-
 }
-

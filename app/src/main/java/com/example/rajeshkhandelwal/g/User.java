@@ -34,6 +34,7 @@ import java.io.InputStream;
 import Tabs.SlidingTabLayout;
 
 
+
 public class User extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private Toolbar toolbar;
@@ -46,6 +47,7 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
     // Profile pic image size in pixels
     private static final int PROFILE_PIC_SIZE = 400;
     private LinearLayout llProfileLayout;
+
 
 
     @Override
@@ -74,6 +76,7 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
         mPager = (ViewPager) findViewById(R.id.pager);
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
         mPager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
+        mTabs.setDistributeEvenly(true);
         mTabs.setViewPager(mPager);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -163,6 +166,8 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
             if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
                 Person currentPerson = Plus.PeopleApi
                         .getCurrentPerson(mGoogleApiClient);
+                String userID = currentPerson.getId();
+
                 String personName = currentPerson.getDisplayName();
                 String personPhotoUrl = currentPerson.getImage().getUrl();
                 String personGooglePlusProfile = currentPerson.getUrl();
@@ -170,7 +175,7 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
 
                 Log.e("UserActivity", "Name: " + personName + ", plusProfile: "
                         + personGooglePlusProfile + ", email: " + email
-                        + ", Image: " + personPhotoUrl);
+                        + ", Image: " + personPhotoUrl+"UserID>>>>"+userID);
 
                 txtName.setText(personName);
                 txtEmail.setText(email);
@@ -192,6 +197,8 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
             e.printStackTrace();
         }
     }
+
+
 
     protected void onStart() {
         super.onStart();
@@ -261,9 +268,18 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
 
         @Override
         public Fragment getItem(int position) {
-            Profile profile = new Profile();
-            profile=Profile.newInstance(position);
-            return profile;
+
+            if(position == 0) // if the position is 0 we are returning the First tab
+            {
+                Profile profile = new Profile();
+                return profile;
+            }
+            else             // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
+            {
+                Circles circle= new Circles();
+                circle=circle.newInstance(position);
+                return circle;
+            }
         }
 
         @Override

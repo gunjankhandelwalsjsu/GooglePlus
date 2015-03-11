@@ -83,10 +83,33 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="appcompat-v7-21.0.3" level="project" />
+    <orderEntry type="library" exported="" name="google-oauth-client-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-oauth-client-appengine-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-api-client-appengine-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-android-1.17.0-rc" level="project" />
     <orderEntry type="library" exported="" name="play-services-6.5.87" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="support-v4-21.0.3" level="project" />
+    <orderEntry type="library" exported="" name="multidex-1.0.0" level="project" />
+    <orderEntry type="library" exported="" name="google-oauth-client-servlet-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-api-client-jackson2-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="appcompat-v7-21.0.3" level="project" />
+    <orderEntry type="library" exported="" name="jackson-core-asl-1.9.11" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-protobuf-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-api-client-xml-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-oauth-client-java6-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-api-services-plus-v1-rev104-1.17.0-rc-javadoc" level="project" />
+    <orderEntry type="library" exported="" name="google-oauth-client-jetty-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-appengine-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-api-client-android-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-api-services-plus-v1-rev104-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-api-client-servlet-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-jackson2-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-api-services-plus-v1-rev104-1.17.0-rc-sources" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-21.0.3" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-xml-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-api-client-1.17.0-rc" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-jdo-1.17.0-rc" level="project" />
   </component>
 </module>
 

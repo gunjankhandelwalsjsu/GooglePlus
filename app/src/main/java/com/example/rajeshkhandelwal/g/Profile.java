@@ -36,7 +36,6 @@ public class Profile extends Fragment {
 
 
         View layout= inflater.inflate(R.layout.fragment_profile, container, false);
-        textView= (TextView) layout.findViewById(R.id.position);
 
         Bundle bundle=getArguments();
         if(bundle!=null)

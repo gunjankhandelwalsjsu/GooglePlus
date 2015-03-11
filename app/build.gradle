@@ -10,6 +10,13 @@ android {
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
+
+    }
+    android {
+        packagingOptions {
+            exclude 'META-INF/LICENSE.txt'
+        }
     }
     buildTypes {
         release {
@@ -17,11 +24,38 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
+
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:multidex:1.0.0'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.google.android.gms:play-services:6.5.87'
+    compile files('libs/google-api-client-1.17.0-rc.jar')
+    compile files('libs/google-api-client-android-1.17.0-rc.jar')
+    compile files('libs/google-api-client-appengine-1.17.0-rc.jar')
+    compile files('libs/google-api-client-servlet-1.17.0-rc.jar')
+    compile files('libs/google-api-client-xml-1.17.0-rc.jar')
+    compile files('libs/google-api-services-plus-v1-rev104-1.17.0-rc.jar')
+    compile files('libs/google-api-services-plus-v1-rev104-1.17.0-rc-javadoc.jar')
+    compile files('libs/google-api-services-plus-v1-rev104-1.17.0-rc-sources.jar')
+    compile files('libs/google-http-client-1.17.0-rc.jar')
+    compile files('libs/google-http-client-android-1.17.0-rc.jar')
+    compile files('libs/google-http-client-appengine-1.17.0-rc.jar')
+    compile files('libs/google-http-client-jackson2-1.17.0-rc.jar')
+    compile files('libs/google-http-client-jdo-1.17.0-rc.jar')
+    compile files('libs/google-http-client-protobuf-1.17.0-rc.jar')
+    compile files('libs/google-http-client-xml-1.17.0-rc.jar')
+    compile files('libs/google-oauth-client-1.17.0-rc.jar')
+    compile files('libs/google-oauth-client-appengine-1.17.0-rc.jar')
+    compile files('libs/google-oauth-client-java6-1.17.0-rc.jar')
+    compile files('libs/google-oauth-client-servlet-1.17.0-rc.jar')
 
+
+    compile files('libs/jackson-core-asl-1.9.11.jar')
+
+    compile files('libs/google-oauth-client-jetty-1.17.0-rc.jar')
 }
