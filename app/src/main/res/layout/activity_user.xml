@@ -4,22 +4,28 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="com.example.rajeshkhandelwal.G+.User">
+    android:id="@+id/my_layout"
+
+    tools:context="com.example.rajeshkhandelwal.g.User">
+
     <include
         android:id="@+id/app_bar"
         layout="@layout/app_bar"/>
     <Tabs.SlidingTabLayout
-        android:layout_below="@id/app_bar"
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
     />
     <android.support.v4.view.ViewPager
-        android:layout_below="@id/app_bar"
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-    />
+        android:layout_weight="1"
+
+        />
+
+
+
     <LinearLayout
         android:id="@+id/llProfile"
         android:layout_width="fill_parent"
@@ -33,7 +39,8 @@
             android:id="@+id/imgProfilePic"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:contentDescription="" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -47,16 +54,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:textSize="20dp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/txtEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:textSize="18dp" />
+                android:textSize="18sp" />
         </LinearLayout>
     </LinearLayout>
+
 
     <Button
         android:id="@+id/btn_sign_out"
@@ -72,6 +80,7 @@
         android:layout_height="wrap_content"
         android:text="@string/btn_revoke_access"
         android:visibility="gone" />
+
 
 
 

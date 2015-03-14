@@ -1,113 +1,184 @@
 package com.example.rajeshkhandelwal.g;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.util.store.FileDataStoreFactory;
-import com.google.api.services.plus.Plus;
-import com.google.api.services.plus.PlusScopes;
-import com.google.api.services.plus.model.PeopleFeed;
-import com.google.api.services.plus.model.Person;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.plus.People;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.PersonBuffer;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Collections;
+import java.util.ArrayList;
 
 
-public class Circles extends Fragment {
+public class Circles extends Fragment implements GoogleApiClient.ConnectionCallbacks,
+        ResultCallback<People.LoadPeopleResult>, OnConnectionFailedListener,
+        DialogInterface.OnCancelListener {
     TextView text;
-    private GoogleApiClient mGoogleApiClient;
     public static com.google.api.services.plus.Plus plus;
-    public Boolean isAuthenticated;
-    private final File DATA_STORE_DIR = new File(System.getProperty("user.home"), ".store/plus_sample");
-    private FileDataStoreFactory dataStoreFactory;
-    private HttpTransport httpTransport;
 
 
-    public Circles() {
-        try
-        {
-            httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-            dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
-            Credential credential = authorize();
-            plus = new Plus.Builder(httpTransport,Constants.JSON_FACTORY, credential).setApplicationName(Constants.APP_NAME).build();
-            isAuthenticated = true;
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            isAuthenticated = false;
-        }
-    }
-    private Credential authorize() throws Exception
-    {
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(Constants.JSON_FACTORY, new InputStreamReader(Authenticator.class.getResourceAsStream("/com/example/plustests/client_secrets.json")));
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport,  Constants.JSON_FACTORY, clientSecrets, Collections.singleton(PlusScopes.PLUS_ME)).setDataStoreFactory(dataStoreFactory).build();
-        return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
-    }
 
-    public void printFriendsList() throws IOException
-    {
-        Plus.People.List listPeople = plus.people().list("me", "visible");
-        PeopleFeed peopleFeed = listPeople.execute();
-        java.util.List<Person> people = peopleFeed.getItems();
-        while(people != null)
-        {
-            for(Person person : people)
-            {
-                com.example.rajeshkhandelwal.g.View.printString(person.getDisplayName(), "Friend:");
-            }
-            if(peopleFeed.getNextPageToken() == null) break;
-            listPeople.setPageToken(peopleFeed.getNextPageToken());
-            peopleFeed = listPeople.execute();
-            people = peopleFeed.getItems();
+        private static final String TAG = "ListConnectedPeople";
+
+        private static final String STATE_RESOLVING_ERROR = "resolving_error";
+
+
+        private static final int REQUEST_CODE_SIGN_IN = 1;
+        private static final int REQUEST_CODE_GET_GOOGLE_PLAY_SERVICES = 2;
+
+        private ArrayAdapter mListAdapter;
+        private ListView mPersonListView;
+        private ArrayList<String> mListItems;
+        private GoogleApiClient mGoogleApiClient;
+        private boolean mResolvingError;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(Plus.API)
+                    .addScope(Plus.SCOPE_PLUS_LOGIN)
+                    .build();
+
+
         }
-    }
+
+
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            mGoogleApiClient.connect();
+        }
+
+        @Override
+        public void onSaveInstanceState(Bundle outState) {
+            super.onSaveInstanceState(outState);
+            outState.putBoolean(STATE_RESOLVING_ERROR, mResolvingError);
+        }
+
+        @Override
+        public void onStop() {
+            super.onStop();
+            mGoogleApiClient.disconnect();
+        }
+
+
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onConnected(Bundle connectionHint) {
+        mPersonListView.setAdapter(mListAdapter);
+        Plus.PeopleApi.loadVisible(mGoogleApiClient, null)
+                .setResultCallback(this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        mPersonListView.setAdapter(null);
+        mGoogleApiClient.connect();
+    }
 
 
+    @Override
+    public void onCancel(DialogInterface dialogInterface) {
+        Log.e(TAG, "Unable to sign the user in.");
+    }
+
+
+    public static Circles getInstance(String position)
+    {
+        Log.i("pos", "pos" + position);
+        Circles circle=new Circles();
+        Bundle args=new Bundle();
+        args.putString("position", position);
+        circle.setArguments(args);
+        return circle;
 
     }
 
-    public static Circles newInstance(int position) {
-        Circles Cfragment = new Circles();
-        Bundle args = new Bundle();
-        Log.i("pos", "position at" + position);
-        args.putInt("position", position);
-        Cfragment.setArguments(args);
-        return Cfragment;
-    }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        try {
-            printFriendsList();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         View layout=inflater.inflate(R.layout.fragment_circles, container, false);
+        mPersonListView = (ListView)layout.findViewById(R.id.person_list);
+
+        mListItems = new ArrayList<String>();
+        mListAdapter=new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1 , mListItems);
+
+        mPersonListView.setAdapter(mListAdapter);
+
+
+        mResolvingError = savedInstanceState != null
+                && savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
+
+        text= (TextView) layout.findViewById(R.id.textView);
+        Bundle bundle = getArguments();
+        if(bundle!=null) {
+
+
+            text.setText("the page is"+bundle.getString("position"));
+        }
+ //       String UserId = bundle.getString("UserId");
         // Inflate the layout for this fragment
 
         return layout;
     }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+       /* if (mResolvingError) {
+            return;
+        }
+
+        mPersonListView.setAdapter(null);
+        try {
+            result.startResolutionForResult(this, REQUEST_CODE_SIGN_IN);
+            mResolvingError = true;
+        } catch (IntentSender.SendIntentException e) {
+            // Get another pending intent to run.
+            mGoogleApiClient.connect();
+        }
+        */
+    }
+
+
+
+        @Override
+        public void onResult(People.LoadPeopleResult peopleData) {
+            if (peopleData.getStatus().getStatusCode() == CommonStatusCodes.SUCCESS) {
+                PersonBuffer personBuffer = peopleData.getPersonBuffer();
+                try {
+                    int count = personBuffer.getCount();
+                    for (int i = 0; i < count; i++) {
+                        Log.d(TAG, "Display name: " + personBuffer.get(i).getDisplayName());
+                    }
+                } finally {
+                    personBuffer.close();
+                }
+            } else {
+                Log.e(TAG, "Error requesting visible circles: " + peopleData.getStatus());
+            }
+        }
+
+
 
 }
 

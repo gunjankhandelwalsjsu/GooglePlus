@@ -47,8 +47,11 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
     // Profile pic image size in pixels
     private static final int PROFILE_PIC_SIZE = 400;
     private LinearLayout llProfileLayout;
-
-
+    public  Person currentPerson;
+    public String userId1;
+    String SCOPE = "oauth2:" + "https://www.googleapis.com/auth/plus.me" + "https://www.googleapis.com/auth/plus.circles.read" + "https://www.googleapis.com/auth/plus.circles.write" + "";
+    String userID3;
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,28 +61,15 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
         setSupportActionBar(toolbar);
         toolbar.setLogoDescription(getResources().getString(R.string.GooglePlus));
         toolbar.setLogo(R.drawable.download);
-       // mPager = (ViewPager) findViewById(R.id.pager);
-      //  mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
-    //    mPager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
-    //    mTabs.setViewPager(mPager);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         imgProfilePic = (ImageView) findViewById(R.id.imgProfilePic);
         txtName = (TextView) findViewById(R.id.txtName);
         txtEmail = (TextView) findViewById(R.id.txtEmail);
-
         SignOutBtn = (Button) findViewById(R.id.btn_sign_out);
         RevokeAccessbtn = (Button) findViewById(R.id.btn_revoke_access);
-
         llProfileLayout = (LinearLayout) findViewById(R.id.llProfile);
         SignOutBtn.setOnClickListener(this);
         RevokeAccessbtn.setOnClickListener(this);
-        mPager = (ViewPager) findViewById(R.id.pager);
-        mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
-        mPager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
-        mTabs.setDistributeEvenly(true);
-        mTabs.setViewPager(mPager);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -87,11 +77,18 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .build();
+        mPager = (ViewPager) findViewById(R.id.pager);
+        mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        mPager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
+        mTabs.setDistributeEvenly(true);
+        mTabs.setViewPager(mPager);
+
 
     }
+
     /**
      * Button on click listener
-     * */
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -105,16 +102,17 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
                 break;
         }
     }
+
     /**
      * Sign-out from google
-     * */
+     */
     private void signOutFromGooglePlus() {
         if (mGoogleApiClient.isConnected()) {
             Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
             mGoogleApiClient.disconnect();
             mGoogleApiClient.connect();
             updateUI(false);
-            Intent intent=new Intent(this,MainActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
 
@@ -123,7 +121,7 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
 
     /**
      * Revoking access from google
-     * */
+     */
     private void revokeGooglePlusAccess() {
         if (mGoogleApiClient.isConnected()) {
             Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
@@ -134,16 +132,17 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
                             Log.e("inOn Rsult", "User access revoked!");
                             mGoogleApiClient.connect();
                             updateUI(false);
-                            Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
                         }
 
                     });
         }
     }
+
     /**
      * Updating the UI, showing/hiding buttons and profile layout
-     * */
+     */
     private void updateUI(boolean isSignedIn) {
         if (isSignedIn) {
             SignOutBtn.setVisibility(View.VISIBLE);
@@ -158,16 +157,17 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
         }
     }
 
+
     /**
      * Fetching user's information name, email, profile pic
-     * */
-    private void getProfileInformation() {
+     */
+    private String getProfileInformation() {
+
         try {
-            if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+            if (Plus.AccountApi.getAccountName(mGoogleApiClient) != null) {
                 Person currentPerson = Plus.PeopleApi
                         .getCurrentPerson(mGoogleApiClient);
                 String userID = currentPerson.getId();
-
                 String personName = currentPerson.getDisplayName();
                 String personPhotoUrl = currentPerson.getImage().getUrl();
                 String personGooglePlusProfile = currentPerson.getUrl();
@@ -175,7 +175,7 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
 
                 Log.e("UserActivity", "Name: " + personName + ", plusProfile: "
                         + personGooglePlusProfile + ", email: " + email
-                        + ", Image: " + personPhotoUrl+"UserID>>>>"+userID);
+                        + ", Image: " + personPhotoUrl + "UserID>>>>" + userID);
 
                 txtName.setText(personName);
                 txtEmail.setText(email);
@@ -188,6 +188,7 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
                         + PROFILE_PIC_SIZE;
 
                 new LoadProfileImage(imgProfilePic).execute(personPhotoUrl);
+                return userID;
 
             } else {
                 Toast.makeText(getApplicationContext(),
@@ -196,7 +197,9 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
+
 
 
 
@@ -239,12 +242,24 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
             Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG).show();
 
             // Get user's information
-             getProfileInformation();
-
+             userID3=getProfileInformation();
+        setUserId(userID3);
             // Update the UI after signin
             updateUI(true);
 
 
+    }
+    public void setUserId(String userId) {
+        this.userId = userId;
+        Log.i("tag","in setData"+userId);
+
+
+    }
+
+    public String getMyData() {
+        Log.i("tag","in getdata"+userId);
+
+        return userId;
     }
 
     @Override
@@ -259,31 +274,39 @@ public class User extends ActionBarActivity implements View.OnClickListener, Goo
 
     }
 
-  class MyPagerAdapter extends FragmentPagerAdapter {
-        String[] tabs;
-        public MyPagerAdapter(FragmentManager fm) {
-            super(fm);
-            tabs=getResources().getStringArray(R.array.tabs);
-        }
 
-        @Override
-        public Fragment getItem(int position) {
 
-            if(position == 0) // if the position is 0 we are returning the First tab
-            {
-                Profile profile = new Profile();
-                return profile;
-            }
-            else             // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
-            {
-                Circles circle= new Circles();
-                circle=circle.newInstance(position);
-                return circle;
-            }
-        }
+    class MyPagerAdapter extends FragmentPagerAdapter {
+      String[] tabs;
+      public MyPagerAdapter(FragmentManager fm) {
+          super(fm);
+          tabs = getResources().getStringArray(R.array.tabs);
+      }
 
-        @Override
-        public CharSequence getPageTitle(int position) {
+
+      @Override
+      public Fragment getItem(int position) {
+          Log.i("Im Here", "pos" + position);
+
+          if (position == 0) // if the position is 0 we are returning the First tab
+          {
+              Profile profile = new Profile();
+
+              return profile;
+          } else             // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
+          {
+
+              Circles frag = Circles.getInstance(getMyData());
+
+              return frag;
+          }
+
+      }
+
+
+
+        public CharSequence getPageTitle(int position)
+        {
             return tabs[position];
         }
 

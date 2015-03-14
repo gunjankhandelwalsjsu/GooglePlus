@@ -5,6 +5,7 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -58,6 +59,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("oncreate", "oncreate");
+
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
@@ -86,6 +89,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener,
     }
     protected void onStart() {
         super.onStart();
+        Log.i("instart", "instart");
+
         mGoogleApiClient.connect();
     }
 
@@ -192,6 +197,9 @@ public class MainActivity extends ActionBarActivity implements OnClickListener,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_sign_in:
+                Log.i("in on click","in on click");
+
+
                 // Signin button clicked
                 signInWithGplus();
                 break;
